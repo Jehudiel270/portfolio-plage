@@ -13,6 +13,9 @@ describe('mots de passe', () => {
   })
   it('refuse les mots de passe faibles', () => {
     expect(validatePasswordStrength('court')).toMatch(/12 caractères/)
+    expect(validatePasswordStrength('Abcdefg3.0x')).toMatch(/12 caractères/)
+    expect(validatePasswordStrength('Abcdefg3.0x', 10)).toBeNull()
+    expect(validatePasswordStrength('Abcde3.0x', 10)).toMatch(/10 caractères/)
     expect(validatePasswordStrength('aaaaaaaaaaaaaaaa')).toBeTruthy()
     expect(validatePasswordStrength('motdepasse')).toBeTruthy()
     expect(validatePasswordStrength('Un-bon-mot-de-passe-2026')).toBeNull()

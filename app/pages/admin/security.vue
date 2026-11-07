@@ -6,6 +6,7 @@ definePageMeta({ layout: 'admin' })
 const toasts = useToasts()
 const session = useAdminSession()
 const enabled = computed(() => Boolean(session.value?.user?.totpEnabled))
+const passwordMinLength = computed(() => session.value?.passwordMinLength ?? 12)
 const pwd = reactive({ current: '', next: '', confirm: '', code: '' })
 const setup = ref<{ secret: string; qrSvg: string } | null>(null)
 const code = ref('')
@@ -64,7 +65,7 @@ const revokeOthers = (): Promise<void> => run(async () => { const r = await admi
       <form v-if="enabled" class="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end" @submit.prevent="turnOff"><AdminField label="Mot de passe" for="d-pwd"><input id="d-pwd" v-model="disable.password" type="password" class="admin-input" autocomplete="current-password" required></AdminField><AdminField label="Code actuel" for="d-code"><input id="d-code" v-model="disable.code" class="admin-input font-mono" inputmode="numeric" maxlength="8" required></AdminField><Button type="submit" variant="outline" :disabled="busy">Désactiver</Button></form></section>
 
     <section class="admin-card p-6"><div class="flex items-center gap-3"><span class="icon-tile size-12"><KeyRound class="size-6 text-primary" /></span><h2 class="font-display text-lg font-bold">Changer le mot de passe</h2></div>
-      <form class="mt-4 grid gap-4 sm:grid-cols-3" @submit.prevent="changePassword"><AdminField label="Mot de passe actuel" for="p-cur"><input id="p-cur" v-model="pwd.current" type="password" class="admin-input" autocomplete="current-password" required></AdminField><AdminField label="Nouveau (12 caractères min.)" for="p-new"><input id="p-new" v-model="pwd.next" type="password" class="admin-input" autocomplete="new-password" minlength="12" required></AdminField><AdminField label="Confirmation" for="p-conf"><input id="p-conf" v-model="pwd.confirm" type="password" class="admin-input" autocomplete="new-password" required></AdminField>
+      <form class="mt-4 grid gap-4 sm:grid-cols-3" @submit.prevent="changePassword"><AdminField label="Mot de passe actuel" for="p-cur"><input id="p-cur" v-model="pwd.current" type="password" class="admin-input" autocomplete="current-password" required></AdminField><AdminField :label="`Nouveau (${passwordMinLength} caractères min.)`" for="p-new"><input id="p-new" v-model="pwd.next" type="password" class="admin-input" autocomplete="new-password" :minlength="passwordMinLength" required></AdminField><AdminField label="Confirmation" for="p-conf"><input id="p-conf" v-model="pwd.confirm" type="password" class="admin-input" autocomplete="new-password" required></AdminField>
         <AdminField v-if="enabled" label="Code de vérification actuel" for="p-code"><input id="p-code" v-model="pwd.code" class="admin-input font-mono" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required></AdminField>
         <div class="sm:col-span-3"><Button type="submit" :disabled="busy || !pwd.current || pwd.next.length < 12">Modifier le mot de passe</Button><span class="ml-3 text-sm text-muted">Les autres sessions seront déconnectées.</span></div></form></section>
 

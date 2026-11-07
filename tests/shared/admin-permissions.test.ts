@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isAdminAccountOwner } from '../../shared/admin-permissions'
+import { adminPasswordMinimumLength, isAdminAccountOwner } from '../../shared/admin-permissions'
 
 describe('propriétaire des comptes administrateur', () => {
   it('compare les adresses sans tenir compte des espaces ni de la casse', () => {
@@ -10,5 +10,11 @@ describe('propriétaire des comptes administrateur', () => {
     expect(isAdminAccountOwner('admin@example.com', 'dossoucarrel@gmail.com')).toBe(false)
     expect(isAdminAccountOwner('dossoucarrel@gmail.com', '')).toBe(false)
     expect(isAdminAccountOwner(null, 'dossoucarrel@gmail.com')).toBe(false)
+  })
+
+  it('assouplit la longueur uniquement pour le propriétaire explicitement configuré', () => {
+    expect(adminPasswordMinimumLength(' DossouCarrel@Gmail.com ', 'dossoucarrel@gmail.com')).toBe(10)
+    expect(adminPasswordMinimumLength('admin@example.com', 'dossoucarrel@gmail.com')).toBe(12)
+    expect(adminPasswordMinimumLength('dossoucarrel@gmail.com', '')).toBe(12)
   })
 })

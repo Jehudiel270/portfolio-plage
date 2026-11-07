@@ -104,7 +104,7 @@ const date = (value: string | null): string => value ? new Intl.DateTimeFormat('
       <form class="mt-5 grid gap-4 md:grid-cols-3" @submit.prevent="createAccount">
         <AdminField label="Adresse e-mail" for="account-email"><input id="account-email" v-model="form.email" type="email" autocomplete="off" class="admin-input" required></AdminField>
         <AdminField label="Mot de passe temporaire (12 caractères min.)" for="account-password"><input id="account-password" v-model="form.password" type="password" autocomplete="new-password" minlength="12" class="admin-input" required></AdminField>
-        <AdminField label="Rôle" for="account-role"><select id="account-role" v-model="form.role" class="admin-input"><option value="admin">Administrateur</option><option value="editor">Éditeur</option><option value="superadmin">Super administrateur</option></select></AdminField>
+        <AdminField label="Rôle" for="account-role"><select id="account-role" v-model="form.role" class="admin-input"><option value="admin">Administrateur</option><option value="editor">Éditeur</option><option v-if="canCreateAccounts" value="superadmin">Super administrateur</option></select></AdminField>
         <details v-if="form.role !== 'superadmin'" class="admin-disclosure md:col-span-3">
           <summary>Définir les espaces accessibles <span class="text-muted">(optionnel)</span></summary>
           <p class="mt-2 text-sm text-muted">« Lecture » permet de consulter ; « Gestion » autorise les modifications. Sans accès, l’espace n’apparaît pas et l’API le refuse.</p>

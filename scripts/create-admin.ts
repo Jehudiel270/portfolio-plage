@@ -1,6 +1,7 @@
 import { createInterface } from 'node:readline/promises'
 import { Writable } from 'node:stream'
 import { z } from 'zod'
+import { adminPasswordMinimumLength } from '../shared/admin-permissions'
 import { countAdmins, createAdmin, findAdminByEmail } from '../server/db/repositories/admin'
 import { hashPassword, validatePasswordStrength } from '../server/utils/password'
 import { requireDatabase } from './_env'
@@ -43,7 +44,7 @@ if (!email || !password) {
   const rl = createInterface({ input: process.stdin, output: process.stdout })
   email ||= (await rl.question('E-mail de l’administrateur : ')).trim()
   rl.close()
-  password ||= await askHidden('Mot de passe (12 caractères minimum) : ')
+  password ||= await askHidden(`Mot de passe (${email.toLowerCase() === ownerEmail ? '10' : '12'} caractères minimum) : `)
 }
 
 const parsed = z.email().safeParse(email)
@@ -52,7 +53,8 @@ if (email.toLowerCase() !== ownerEmail) {
   console.error('✖ Cette commande ne peut créer que le compte indiqué par NUXT_SUPERADMIN_OWNER_EMAIL.')
   process.exit(1)
 }
-const weakness = validatePasswordStrength(password)
+const minimumLength = adminPasswordMinimumLength(email, ownerEmail)
+const weakness = validatePasswordStrength(password, minimumLength)
 if (weakness) { console.error(`✖ ${weakness}`); process.exit(1) }
 if (await findAdminByEmail(db, email)) { console.error('✖ Un administrateur utilise déjà cette adresse e-mail.'); process.exit(1) }
 

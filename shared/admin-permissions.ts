@@ -24,6 +24,10 @@ export function isAdminAccountOwner(actorEmail: string | null | undefined, owner
   return Boolean(owner && actorEmail?.trim().toLowerCase() === owner)
 }
 
+export function adminPasswordMinimumLength(email: string | null | undefined, ownerEmail: string | null | undefined): number {
+  return isAdminAccountOwner(email, ownerEmail) ? 10 : 12
+}
+
 export const ADMIN_MODULE_LABELS: Record<AdminModule, string> = {
   projects: 'Projets',
   skills: 'Compétences',

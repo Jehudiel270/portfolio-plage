@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { adminPasswordMinimumLength } from '../../../../shared/admin-permissions'
 import { deleteOtherSessions, findAdminById, updateAdminPassword, writeAdminAuditLog } from '../../../db/repositories/admin'
 import { hitRateLimit } from '../../../db/repositories/rate-limit'
 import { decryptSecret, verifyTotp } from '../../../utils/totp'
@@ -16,7 +17,8 @@ export default defineEventHandler(async (event) => {
     const secret = row.totpSecret ? decryptSecret(row.totpSecret, serverSecret()) : null
     if (!secret || !code || !verifyTotp(secret, code)) throw apiError(401, 'INVALID_CODE', 'Saisissez un code 2FA valide pour changer le mot de passe.')
   }
-  const weakness = validatePasswordStrength(next)
+  const minimumLength = adminPasswordMinimumLength(admin.email, useServerConfig().superadminOwnerEmail)
+  const weakness = validatePasswordStrength(next, minimumLength)
   if (weakness) throw apiError(422, 'WEAK_PASSWORD', weakness)
   await updateAdminPassword(db, admin.adminId, await hashPassword(next))
   const revoked = await deleteOtherSessions(db, admin.adminId, admin.sessionId)

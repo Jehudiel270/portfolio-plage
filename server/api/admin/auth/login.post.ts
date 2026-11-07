@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { adminPasswordMinimumLength } from '../../../../shared/admin-permissions'
 import { consumeAdminRecoveryCode, findAdminByEmail, purgeExpiredSessions, touchLastLogin, writeAdminAuditLog } from '../../../db/repositories/admin'
 import { hitRateLimit, purgeStaleRateLimits, resetRateLimit } from '../../../db/repositories/rate-limit'
 import { hashRecoveryCode } from '../../../utils/totp'
@@ -52,6 +53,7 @@ export default defineEventHandler(async (event) => {
   return {
     ok: true,
     totpRequired: useServerConfig().isProduction,
+    passwordMinLength: adminPasswordMinimumLength(admin.email, useServerConfig().superadminOwnerEmail),
     user: { id: admin.id, email: admin.email, role: admin.role, permissions: admin.permissions, totpEnabled: admin.totpEnabled },
     csrfToken: csrfTokenFor(sessionId),
   }

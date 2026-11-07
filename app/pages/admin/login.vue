@@ -22,11 +22,11 @@ async function submit(): Promise<void> {
   error.value = ''
   busy.value = true
   try {
-    const response = await $fetch<{ totpRequired: boolean; user: NonNullable<typeof session.value>['user']; csrfToken: string }>('/api/admin/auth/login', {
+    const response = await $fetch<{ totpRequired: boolean; passwordMinLength: number; user: NonNullable<typeof session.value>['user']; csrfToken: string }>('/api/admin/auth/login', {
       method: 'POST',
       body: { email: email.value, password: password.value, ...(code.value ? (/^\d{6}$/.test(code.value) ? { code: code.value } : { recoveryCode: code.value }) : {}) },
     })
-    session.value = { authenticated: true, databaseConfigured: true, totpRequired: response.totpRequired, user: response.user, csrfToken: response.csrfToken }
+    session.value = { authenticated: true, databaseConfigured: true, totpRequired: response.totpRequired, passwordMinLength: response.passwordMinLength, user: response.user, csrfToken: response.csrfToken }
     code.value = ''
     password.value = ''
     await navigateTo(response.totpRequired && response.user?.totpEnabled === false ? '/admin/security?setup=1' : '/admin')

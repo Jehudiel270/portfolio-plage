@@ -35,8 +35,8 @@ export function getDummyHash(): Promise<string> {
 const COMMON = new Set(['password', 'motdepasse', '123456789012', 'azertyuiopqs', 'qwertyuiopas', 'administrateur', 'passwordpassword'])
 
 /** Retourne un message d'erreur, ou `null` si le mot de passe est acceptable. */
-export function validatePasswordStrength(password: string): string | null {
-  if (password.length < 12) return 'Le mot de passe doit contenir au moins 12 caractères.'
+export function validatePasswordStrength(password: string, minimumLength = 12): string | null {
+  if (password.length < minimumLength) return `Le mot de passe doit contenir au moins ${minimumLength} caractères.`
   if (password.length > 200) return 'Le mot de passe est trop long (200 caractères maximum).'
   if (COMMON.has(password.toLowerCase()) || /^(.)\1+$/.test(password)) return 'Ce mot de passe est trop prévisible.'
   const classes = [/[a-z]/, /[A-Z]/, /\d/, /[^A-Za-z0-9]/].filter((re) => re.test(password)).length

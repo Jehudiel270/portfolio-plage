@@ -4,6 +4,7 @@ export interface AdminSession {
   authenticated: boolean
   databaseConfigured?: boolean
   totpRequired?: boolean
+  passwordMinLength?: number
   user?: { id?: number; email: string; role: string; permissions?: AdminPermissionGrant[]; totpEnabled?: boolean }
   csrfToken?: string
 }

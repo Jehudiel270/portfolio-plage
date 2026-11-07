@@ -49,6 +49,7 @@ Un espace non accordé est refusé côté serveur, même si quelqu’un appelle 
 | Médiathèque | Import et suppression de médias. |
 
 Chaque compte non-super-admin conserve le module Sécurité en gestion pour pouvoir entretenir ses propres facteurs d’authentification. La création de comptes, y compris les super-admins, est réservée au compte désigné par `NUXT_SUPERADMIN_OWNER_EMAIL`. Les autres super-admins peuvent gérer les accès existants, mais ne peuvent pas promouvoir un compte au rôle super-admin ni modifier/supprimer le propriétaire.
+La règle générale reste de 12 caractères minimum ; seul le propriétaire explicitement configuré peut utiliser 10 caractères minimum, sans motif prévisible et avec au moins deux catégories de caractères.
 
 ## Plan ordonné
 
