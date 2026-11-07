@@ -4,6 +4,7 @@ import type { SmtpConfig } from '../services/mailer'
 export interface ServerConfig {
   databaseUrl: string
   sessionSecret: string
+  superadminOwnerEmail: string
   cloudinary: { cloudName: string; apiKey: string; apiSecret: string }
   smtp: SmtpConfig
   siteUrl: string
@@ -19,6 +20,7 @@ export function useServerConfig(): ServerConfig {
   return {
     databaseUrl: first(rc.databaseUrl, env.DATABASE_URL),
     sessionSecret: first(rc.sessionPassword, env.NUXT_SESSION_PASSWORD),
+    superadminOwnerEmail: first(rc.superadminOwnerEmail, env.NUXT_SUPERADMIN_OWNER_EMAIL).trim().toLowerCase(),
     cloudinary: {
       cloudName: first(rc.cloudinary.cloudName, env.CLOUDINARY_CLOUD_NAME),
       apiKey: first(rc.cloudinary.apiKey, env.CLOUDINARY_API_KEY),

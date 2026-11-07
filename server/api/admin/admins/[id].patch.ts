@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ADMIN_MODULES, DEFAULT_ADMIN_PERMISSIONS } from '../../../../shared/admin-permissions'
+import { ADMIN_MODULES, DEFAULT_ADMIN_PERMISSIONS, isAdminAccountOwner } from '../../../../shared/admin-permissions'
 import { findAdminById, updateAdminAccess, writeAdminAuditLog } from '../../../db/repositories/admin'
 
 const schema = z.object({
@@ -20,6 +20,13 @@ export default defineEventHandler(async (event) => {
   const before = await findAdminById(useDb(), id)
   if (!before) throw apiError(404, 'ADMIN_NOT_FOUND', 'Compte introuvable.')
   if (id === actor.adminId) throw apiError(409, 'CANNOT_EDIT_SELF', 'Utilisez un autre compte super administrateur pour modifier vos propres autorisations.')
+  const ownerEmail = useServerConfig().superadminOwnerEmail
+  if (isAdminAccountOwner(before.email, ownerEmail) && !isAdminAccountOwner(actor.email, ownerEmail)) {
+    throw apiError(403, 'ACCOUNT_OWNER_PROTECTED', 'Seul le compte propriétaire peut modifier ses autorisations.')
+  }
+  if (body.role === 'superadmin' && !isAdminAccountOwner(actor.email, ownerEmail)) {
+    throw apiError(403, 'ACCOUNT_OWNER_REQUIRED', 'Seul le compte propriétaire peut nommer un super administrateur.')
+  }
   const permissions = body.role === 'superadmin' ? DEFAULT_ADMIN_PERMISSIONS
     : [...body.permissions.filter((item) => item.module !== 'security'), { module: 'security' as const, access: 'write' as const }]
   const updated = await updateAdminAccess(useDb(), id, { role: body.role, permissions })

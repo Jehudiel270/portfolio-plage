@@ -37,6 +37,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     databaseUrl: '',
     sessionPassword: '',
+    superadminOwnerEmail: '',
     cloudinary: { cloudName: '', apiKey: '', apiSecret: '' },
     smtp: { host: '', port: '', secure: '', user: '', password: '', from: '' },
     public: { siteUrl: '' },

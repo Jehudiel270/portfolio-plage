@@ -21,6 +21,7 @@ const toasts = useToasts()
 const accounts = ref<Account[]>([])
 const audit = ref<AuditEntry[]>([])
 const drafts = ref<Record<number, AccountDraft>>({})
+const canCreateAccounts = ref(false)
 const loading = ref(false)
 const busy = ref(false)
 const form = reactive({ email: '', password: '', role: 'admin' as AdminRole })
@@ -39,10 +40,11 @@ async function load(): Promise<void> {
   loading.value = true
   try {
     const [users, logs] = await Promise.all([
-      adminFetch<{ items: Account[] }>('/api/admin/admins'),
+      adminFetch<{ items: Account[]; canCreateAccounts: boolean }>('/api/admin/admins'),
       adminFetch<{ items: AuditEntry[] }>('/api/admin/admins/audit'),
     ])
     accounts.value = users.items
+    canCreateAccounts.value = users.canCreateAccounts
     audit.value = logs.items
     drafts.value = Object.fromEntries(users.items.map((account) => [account.id, makeDraft(account)]))
   } catch (error) {
@@ -94,10 +96,11 @@ const date = (value: string | null): string => value ? new Intl.DateTimeFormat('
 
 <template>
   <div class="grid gap-6">
-    <AdminPageHeader title="Comptes et accès" description="Créez des comptes dédiés et limitez chacun aux espaces dont il a besoin. Les autorisations sont contrôlées par l’API, pas seulement masquées dans le menu." />
+    <AdminPageHeader title="Comptes et accès" description="Gérez les comptes dédiés et limitez chacun aux espaces dont il a besoin. La création est réservée au propriétaire; les autorisations sont toujours contrôlées par l’API." />
 
-    <section class="admin-card p-6">
+    <section v-if="canCreateAccounts" class="admin-card p-6">
       <h2 class="font-display text-xl font-bold">Créer un compte</h2>
+      <p class="mt-1 text-sm text-muted">Le compte propriétaire est le seul autorisé à créer des comptes, y compris d’autres super administrateurs.</p>
       <form class="mt-5 grid gap-4 md:grid-cols-3" @submit.prevent="createAccount">
         <AdminField label="Adresse e-mail" for="account-email"><input id="account-email" v-model="form.email" type="email" autocomplete="off" class="admin-input" required></AdminField>
         <AdminField label="Mot de passe temporaire (12 caractères min.)" for="account-password"><input id="account-password" v-model="form.password" type="password" autocomplete="new-password" minlength="12" class="admin-input" required></AdminField>
@@ -117,6 +120,7 @@ const date = (value: string | null): string => value ? new Intl.DateTimeFormat('
         <div class="md:col-span-3"><Button type="submit" :disabled="busy || !form.email || form.password.length < 12">Créer le compte</Button></div>
       </form>
     </section>
+    <p v-else class="admin-card p-5 text-sm text-muted">La création de comptes, y compris de super administrateurs, est réservée au compte propriétaire.</p>
 
     <section class="admin-card p-6">
       <div class="flex flex-wrap items-end justify-between gap-3">

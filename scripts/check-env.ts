@@ -2,6 +2,7 @@
 const rows: [string, boolean, string][] = [
   ['DATABASE_URL', Boolean(process.env.DATABASE_URL), 'obligatoire'],
   ['NUXT_SESSION_PASSWORD (≥ 32 car.)', (process.env.NUXT_SESSION_PASSWORD ?? '').length >= 32, 'obligatoire'],
+  ['NUXT_SUPERADMIN_OWNER_EMAIL', Boolean(process.env.NUXT_SUPERADMIN_OWNER_EMAIL?.trim()), 'obligatoire'],
   ['CLOUDINARY_CLOUD_NAME', Boolean(process.env.CLOUDINARY_CLOUD_NAME), 'images'],
   ['CLOUDINARY_API_KEY', Boolean(process.env.CLOUDINARY_API_KEY), 'images'],
   ['CLOUDINARY_API_SECRET', Boolean(process.env.CLOUDINARY_API_SECRET), 'images'],

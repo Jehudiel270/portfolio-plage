@@ -21,9 +21,15 @@ async function askHidden(question: string): Promise<string> {
 
 const db = requireDatabase()
 const allowAdditional = process.argv.includes('--add')
+const ownerEmail = process.env.NUXT_SUPERADMIN_OWNER_EMAIL?.trim().toLowerCase() ?? ''
+
+if (!ownerEmail) {
+  console.error('✖ Définissez NUXT_SUPERADMIN_OWNER_EMAIL avant de créer le super administrateur propriétaire.')
+  process.exit(1)
+}
 
 if (!allowAdditional && (await countAdmins(db)) > 0) {
-  console.error('✖ Un administrateur existe déjà. Relancez avec --add pour en créer un autre (pnpm admin:create -- --add).')
+  console.error('✖ Un administrateur existe déjà. Les comptes supplémentaires se créent depuis l’espace de gestion du propriétaire.')
   process.exit(1)
 }
 
@@ -42,10 +48,14 @@ if (!email || !password) {
 
 const parsed = z.email().safeParse(email)
 if (!parsed.success) { console.error('✖ Adresse e-mail invalide.'); process.exit(1) }
+if (email.toLowerCase() !== ownerEmail) {
+  console.error('✖ Cette commande ne peut créer que le compte indiqué par NUXT_SUPERADMIN_OWNER_EMAIL.')
+  process.exit(1)
+}
 const weakness = validatePasswordStrength(password)
 if (weakness) { console.error(`✖ ${weakness}`); process.exit(1) }
 if (await findAdminByEmail(db, email)) { console.error('✖ Un administrateur utilise déjà cette adresse e-mail.'); process.exit(1) }
 
-const created = await createAdmin(db, { email, passwordHash: await hashPassword(password) })
+const created = await createAdmin(db, { email, passwordHash: await hashPassword(password), role: 'superadmin' })
 console.log(`✔ ${created.role === 'superadmin' ? 'Super administrateur' : 'Administrateur'} créé : ${email.toLowerCase()}. Connectez-vous sur /admin/login.`)
 console.log('  Conseil : retirez ADMIN_PASSWORD de votre environnement.')

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ADMIN_MODULES, DEFAULT_ADMIN_PERMISSIONS } from '../../../../shared/admin-permissions'
+import { ADMIN_MODULES, DEFAULT_ADMIN_PERMISSIONS, isAdminAccountOwner } from '../../../../shared/admin-permissions'
 import { createAdmin, writeAdminAuditLog } from '../../../db/repositories/admin'
 
 const grantSchema = z.object({ module: z.enum(ADMIN_MODULES), access: z.enum(['read', 'write']) })
@@ -17,6 +17,9 @@ const createSchema = z.object({
 export default defineEventHandler(async (event) => {
   const actor = await requireAdmin(event)
   if (actor.role !== 'superadmin') throw apiError(403, 'SUPERADMIN_REQUIRED', 'Seul un super administrateur peut créer des comptes.')
+  if (!isAdminAccountOwner(actor.email, useServerConfig().superadminOwnerEmail)) {
+    throw apiError(403, 'ACCOUNT_OWNER_REQUIRED', 'Seul le compte propriétaire peut créer des comptes, y compris des super administrateurs.')
+  }
   assertBodySize(event, 8_000)
   const body = await readBodyWith(event, createSchema)
   const weakness = validatePasswordStrength(body.password)

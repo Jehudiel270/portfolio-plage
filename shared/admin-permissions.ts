@@ -19,6 +19,11 @@ export type AdminAccess = 'read' | 'write'
 export type AdminPermissionGrant = { module: AdminModule; access: AdminAccess }
 export type AdminRole = 'superadmin' | 'admin' | 'editor'
 
+export function isAdminAccountOwner(actorEmail: string | null | undefined, ownerEmail: string | null | undefined): boolean {
+  const owner = ownerEmail?.trim().toLowerCase()
+  return Boolean(owner && actorEmail?.trim().toLowerCase() === owner)
+}
+
 export const ADMIN_MODULE_LABELS: Record<AdminModule, string> = {
   projects: 'Projets',
   skills: 'Compétences',

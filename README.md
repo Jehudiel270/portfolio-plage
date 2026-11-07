@@ -64,9 +64,10 @@ Portfolio personnel clair, lisible et soigné : thème sable / océan turquoise 
 ```bash
 pnpm install
 cp .env.example .env          # Windows PowerShell : Copy-Item .env.example .env
-# renseignez DATABASE_URL et NUXT_SESSION_PASSWORD (voir §4)
+# renseignez DATABASE_URL, NUXT_SESSION_PASSWORD et NUXT_SUPERADMIN_OWNER_EMAIL (voir §4)
 pnpm check:env                # vérifie la configuration sans rien afficher de secret
 pnpm db:migrate               # applique les migrations (14 tables)
+# ADMIN_EMAIL doit correspondre à NUXT_SUPERADMIN_OWNER_EMAIL
 ADMIN_EMAIL=vous@exemple.com ADMIN_PASSWORD='un-mot-de-passe-long-et-unique' pnpm admin:create
 pnpm db:seed:demo             # (facultatif) contenu d'exemple, marqué « démo »
 pnpm dev                      # http://localhost:3000   ·   administration : /admin
@@ -87,6 +88,7 @@ Sous Windows PowerShell, définissez les variables ainsi : `$env:ADMIN_EMAIL='vo
 |---|---|---|
 | `DATABASE_URL` | oui | Chaîne de connexion Neon (« Pooled connection »). |
 | `NUXT_SESSION_PASSWORD` | oui | Secret d'au moins 32 caractères (`openssl rand -base64 48`). Signe les sessions et le jeton CSRF ; sert aussi à chiffrer le secret de double authentification. **Le changer déconnecte tout le monde et invalide les codes 2FA enregistrés** (voir `pnpm admin:reset-2fa`). |
+| `NUXT_SUPERADMIN_OWNER_EMAIL` | oui pour la gestion des comptes | Adresse du propriétaire super administrateur ; seul ce compte peut créer des comptes ou nommer d'autres super administrateurs. |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` | pour les images | Console Cloudinary > API Keys. |
 | `CLOUDINARY_API_SECRET` | pour les images | **Secret** : jamais exposé au navigateur ni préfixé `NUXT_PUBLIC_`. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | pour l'e-mail | Envoi des messages du formulaire. |
@@ -110,7 +112,7 @@ Le navigateur ne se connecte jamais à la base : tout passe par l'API serveur.
 
 ## 6. Cloudinary (images)
 
-- Téléversement **signé** : le serveur signe chaque envoi (le dossier et les formats `jpg/png/webp/avif/gif/svg` sont imposés par la signature) ; le secret reste côté serveur.
+- Téléversement **signé** : le serveur signe chaque envoi dans `portfolio-plage/<type>` (par exemple `portfolio-plage/projects` ; formats `jpg/png/webp/avif/gif/svg`) ; le secret reste côté serveur. Les anciens identifiants `portfolio/...` restent supprimables pour éviter les fichiers orphelins.
 - Les URL et identifiants publics sont stockés en base ; les images sont servies optimisées (`f_auto`, `q_auto`, redimensionnement).
 - À la suppression d'une fiche ou au remplacement d'une image, l'ancienne image est supprimée **sauf si elle est utilisée ailleurs**.
 - Si Cloudinary n'est pas configuré, les téléversements renvoient un message clair (503) ; le reste fonctionne.
@@ -132,7 +134,7 @@ Le navigateur ne se connecte jamais à la base : tout passe par l'API serveur.
 
 ### Comptes et permissions
 
-Le premier compte est le super administrateur. Depuis *Comptes et accès*, il peut créer des comptes administrateur/éditeur, leur accorder la lecture ou la gestion d’espaces précis et consulter le journal des actions. Les comptes délégués ne peuvent pas gérer les autres comptes. La sécurité de son propre compte reste accessible à chaque admin/éditeur. Toute modification d’accès révoque les sessions de la personne concernée ; le dernier super administrateur ne peut pas être supprimé ou rétrogradé.
+Le premier compte est le super administrateur propriétaire ; son adresse doit correspondre à `NUXT_SUPERADMIN_OWNER_EMAIL`. La commande de provisionnement ne crée que ce compte. Depuis *Comptes et accès*, seul ce propriétaire peut créer des administrateurs, éditeurs ou super administrateurs. Les autres super administrateurs peuvent gérer les accès existants, mais ne peuvent pas créer/promouvoir d'autres super administrateurs ni modifier ou supprimer le compte propriétaire. La sécurité de son propre compte reste accessible à chaque admin/éditeur. Toute modification d’accès révoque les sessions de la personne concernée ; le dernier super administrateur ne peut pas être supprimé ou rétrogradé.
 
 La 2FA TOTP est obligatoire en production. L’activation exige le mot de passe courant et la validation d’un code. Les codes de récupération ne sont affichés qu’une fois et ne peuvent servir qu’une fois chacun.
 
