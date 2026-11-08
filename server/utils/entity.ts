@@ -3,10 +3,15 @@ import { z } from 'zod'
 import { ENTITY_KEYS, type EntityKey } from '../../shared/schemas/entities'
 import { apiError } from './errors'
 
+export function resolveEntityKey(routeEntity: string | undefined, pathname: string): EntityKey | null {
+  const parsed = z.enum(ENTITY_KEYS).safeParse(routeEntity ?? pathname.split('/')[4])
+  return parsed.success ? parsed.data : null
+}
+
 export function parseEntityKey(event: H3Event): EntityKey {
-  const parsed = z.enum(ENTITY_KEYS).safeParse(getRouterParam(event, 'entity'))
-  if (!parsed.success) throw apiError(404, 'UNKNOWN_ENTITY', 'Type de contenu inconnu.')
-  return parsed.data
+  const entity = resolveEntityKey(getRouterParam(event, 'entity'), getRequestURL(event).pathname)
+  if (!entity) throw apiError(404, 'UNKNOWN_ENTITY', 'Type de contenu inconnu.')
+  return entity
 }
 
 /** Refuse les corps démesurés avant lecture (protection simple contre les abus). */
