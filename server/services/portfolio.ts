@@ -90,8 +90,8 @@ export function composePortfolio(input: PortfolioInput): PublicPortfolio {
     icon: resolveIcon(r.icon), color: r.color, proficiency: r.proficiency, featured: r.featured, sortOrder: r.sortOrder,
   }))
   const publicProjects: PublicProject[] = input.projects.map((r) => ({
-    id: r.id, isDemo: r.isDemo, hidden: hide(r.status === 'published'), title: r.title, slug: r.slug, shortDescription: r.shortDescription, description: r.description, problem: r.problem,
-    features: r.features, category: r.category, technologies: tech(r.technologies), coverImageUrl: r.coverImageUrl, gallery: r.gallery, liveUrl: r.liveUrl,
+    id: r.id, isDemo: r.isDemo, hidden: hide(r.status === 'published'), title: r.title, slug: r.slug, shortDescription: r.shortDescription, description: r.description, problem: r.problem, role: r.role,
+    features: r.features, results: r.results, category: r.category, technologies: tech(r.technologies), coverImageUrl: r.coverImageUrl, gallery: r.gallery, liveUrl: r.liveUrl,
     repositoryUrl: r.repositoryUrl, featured: r.featured, sortOrder: r.sortOrder, projectDate: r.projectDate, createdAt: iso(r.createdAt), color: r.color,
   }))
   const education: PublicEducation[] = input.education.map((r) => ({

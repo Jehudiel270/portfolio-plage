@@ -24,10 +24,16 @@ function onNumber(key: string, value: string): void { set(key, value === '' ? nu
 </script>
 
 <template>
-  <div class="grid gap-8">
-    <fieldset v-for="[title, items] in sections" :key="title" class="grid gap-4 border-0 p-0">
-      <legend class="mb-1 font-display text-sm font-semibold text-accent">{{ title }}</legend>
-      <div class="grid gap-4 sm:grid-cols-2">
+  <div class="grid gap-3">
+    <div v-if="fields[0]?.section.startsWith('01 ·')" class="rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm">
+      <p class="font-semibold text-primary">Une bonne étude de cas raconte une histoire.</p>
+      <p class="mt-1 text-muted">Présentez le besoin, votre contribution, la solution et des résultats vérifiables. Les sections se replient pour garder le formulaire lisible.</p>
+    </div>
+    <details v-for="([title, items], index) in sections" :key="title" class="admin-disclosure" :open="index === 0">
+      <summary><span class="flex-1">{{ title }}</span><span class="text-xs font-medium text-muted">{{ items.length }} champs</span></summary>
+      <fieldset class="mt-4 grid gap-4 border-0 p-0">
+        <legend class="sr-only">{{ title }}</legend>
+        <div class="grid gap-4 sm:grid-cols-2">
         <template v-for="field in items" :key="field.key">
           <div :class="field.wide || ['textarea', 'tags', 'lines', 'image', 'gallery', 'icon'].includes(field.type) ? 'sm:col-span-2' : ''">
             <AdminField v-if="['text', 'url', 'date', 'number'].includes(field.type)" :label="field.label" :for="uid(field.key)" :hint="field.hint" :optional="field.optional" :error="errors[field.key]">
@@ -42,7 +48,7 @@ function onNumber(key: string, value: string): void { set(key, value === '' ? nu
             </AdminField>
             <AdminToggle v-else-if="field.type === 'boolean'" :model-value="model[field.key] === true" :label="field.label" :hint="field.hint" @update:model-value="set(field.key, $event)" />
             <AdminColorField v-else-if="field.type === 'color'" :model-value="(model[field.key] as string | null) ?? null" :label="field.label" :hint="field.hint" :optional="field.optional" @update:model-value="set(field.key, $event)" />
-            <AdminTagsField v-else-if="field.type === 'tags'" :model-value="list(field.key)" :label="field.label" :hint="field.hint" :optional="field.optional" :error="errors[field.key]" @update:model-value="set(field.key, $event)" />
+            <AdminTagsField v-else-if="field.type === 'tags'" :model-value="list(field.key)" :label="field.label" :hint="field.hint" :optional="field.optional" :error="errors[field.key]" :icon-preview="field.iconPreview" @update:model-value="set(field.key, $event)" />
             <AdminLinesField v-else-if="field.type === 'lines'" :model-value="list(field.key)" :label="field.label" :hint="field.hint" :optional="field.optional" :error="errors[field.key]" @update:model-value="set(field.key, $event)" />
             <AdminImageField v-else-if="field.type === 'image'" :url="(model[field.key] as string | null) ?? null" :public-id="(model[field.publicIdKey ?? ''] as string | null) ?? null" :label="field.label" :folder="folder" :hint="field.hint" :optional="field.optional" :error="errors[field.key]" @update:url="set(field.key, $event)" @update:public-id="field.publicIdKey && set(field.publicIdKey, $event)" />
             <AdminGalleryField v-else-if="field.type === 'gallery'" :model-value="(model[field.key] as ImageRef[] | undefined) ?? []" :label="field.label" :folder="folder" :hint="field.hint" :optional="field.optional" @update:model-value="set(field.key, $event)" />
@@ -50,7 +56,8 @@ function onNumber(key: string, value: string): void { set(key, value === '' ? nu
             <AdminIconPicker v-else-if="field.type === 'icon'" :model-value="(model[field.key] as string | null) ?? null" :public-id="(model[field.publicIdKey ?? ''] as string | null) ?? null" :label="field.label" :folder="folder" :hint="field.hint" :optional="field.optional" :suggest-from="field.suggestFrom ? str(field.suggestFrom) : undefined" @update:model-value="set(field.key, $event)" @update:public-id="field.publicIdKey && set(field.publicIdKey, $event)" />
           </div>
         </template>
-      </div>
-    </fieldset>
+        </div>
+      </fieldset>
+    </details>
   </div>
 </template>

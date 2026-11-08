@@ -20,6 +20,12 @@ describe('schémas des entités', () => {
     expect(ENTITY_SCHEMAS.projects.safeParse({ ...base, status: 'archived' }).success).toBe(false)
     expect(ENTITY_SCHEMAS.projects.safeParse({ ...base, color: 'rouge' }).success).toBe(false)
   })
+  it('valide les nouvelles rubriques de contribution et de résultats des études de cas', () => {
+    const base = { ...ENTITY_DEFAULTS.projects, title: 'Projet', slug: 'projet' }
+    expect(ENTITY_SCHEMAS.projects.safeParse({ ...base, role: 'Conception et développement', results: ['Temps de chargement réduit de 40 %'] }).success).toBe(true)
+    expect(ENTITY_SCHEMAS.projects.safeParse({ ...base, role: 'x'.repeat(1001) }).success).toBe(false)
+    expect(ENTITY_SCHEMAS.projects.safeParse({ ...base, results: Array.from({ length: 21 }, () => 'Résultat') }).success).toBe(false)
+  })
   it('la modification partielle n’applique jamais de valeur par défaut aux champs absents', () => {
     const patch = ENTITY_SCHEMAS.projects.partial().parse({ featured: true })
     expect(patch).toEqual({ featured: true })

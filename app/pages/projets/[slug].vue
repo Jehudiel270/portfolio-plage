@@ -51,7 +51,9 @@ useHead(() => ({
       <div class="grid content-start gap-8">
         <section v-if="project.problem" class="grid gap-3"><h2 class="text-2xl">Le contexte</h2><p class="whitespace-pre-line text-lg text-fg/85">{{ project.problem }}</p></section>
         <section v-if="project.description" class="grid gap-3"><h2 class="text-2xl">La démarche</h2><p class="whitespace-pre-line text-lg text-fg/85">{{ project.description }}</p></section>
-        <section v-if="project.features.length" class="grid gap-3"><h2 class="text-2xl">Fonctionnalités et résultats</h2><ul class="grid gap-3"><li v-for="feature in project.features" :key="feature" class="card p-4">{{ feature }}</li></ul></section>
+        <section v-if="project.role" class="grid gap-3"><h2 class="text-2xl">Mon rôle</h2><p class="whitespace-pre-line text-lg text-fg/85">{{ project.role }}</p></section>
+        <section v-if="project.features.length" class="grid gap-3"><h2 class="text-2xl">Fonctionnalités clés</h2><ul class="grid gap-3"><li v-for="feature in project.features" :key="feature" class="card p-4">{{ feature }}</li></ul></section>
+        <section v-if="project.results.length" class="grid gap-3"><h2 class="text-2xl">Résultats</h2><ul class="grid gap-3 sm:grid-cols-2"><li v-for="result in project.results" :key="result" class="card border-primary/20 p-4 font-semibold">{{ result }}</li></ul></section>
         <section v-if="project.gallery.length" class="grid gap-4"><h2 class="text-2xl">Galerie</h2><ul class="grid gap-4 sm:grid-cols-2"><li v-for="image in project.gallery" :key="image.publicId ?? image.url"><img :src="optimizeCloudinaryUrl(image.url, { width: 1000, height: 700, crop: 'limit' })" :alt="`Capture du projet ${project.title}`" loading="lazy" class="w-full rounded-2xl border border-line"></li></ul></section>
       </div>
       <aside class="card h-fit p-5"><h2 class="font-display text-lg font-bold">Découvrir le projet</h2><div class="mt-4 grid gap-3">

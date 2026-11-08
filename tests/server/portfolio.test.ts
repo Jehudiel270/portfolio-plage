@@ -54,9 +54,11 @@ describe('portfolio public', () => {
 
   it('associe une icône aux technologies : compétence du même nom d’abord, sinon bibliothèque', async () => {
     await createRow(db, 'skills', { ...ENTITY_DEFAULTS.skills, name: 'Nuxt', slug: '', icon: 'lucide:Code' })
-    await createRow(db, 'projects', { ...ENTITY_DEFAULTS.projects, title: 'P', slug: '', status: 'published', technologies: ['Nuxt', 'Vue.js', 'Inconnu maison'] })
+    await createRow(db, 'projects', { ...ENTITY_DEFAULTS.projects, title: 'P', slug: '', status: 'published', technologies: ['Nuxt', 'Vue.js', 'Inconnu maison'], role: 'Conception et développement', results: ['Temps de chargement réduit'] })
     const live = await buildPublicPortfolio(db, { preview: false, emailConfigured: false })
-    const tech = live.projects.find((p) => p.title === 'P')!.technologies
+    const project = live.projects.find((p) => p.title === 'P')!
+    const tech = project.technologies
+    expect(project).toMatchObject({ role: 'Conception et développement', results: ['Temps de chargement réduit'] })
     expect(tech[0]?.icon).toEqual({ type: 'lucide', name: 'Code' })
     expect(tech[1]?.icon).toMatchObject({ type: 'brand', slug: 'vuedotjs' })
     expect(tech[2]?.icon).toBeNull()

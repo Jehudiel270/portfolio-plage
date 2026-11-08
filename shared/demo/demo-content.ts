@@ -50,7 +50,9 @@ const project = (n: number, title: string, category: string, techs: string[], ex
   shortDescription: 'Projet de démonstration : remplacez ce texte par la présentation de votre réalisation.',
   description: `${NOTE}\n\nDécrivez ici le contexte, votre rôle et le résultat obtenu.`,
   problem: 'Quelle difficulté ce projet résolvait-il ? (texte de démonstration)',
+  role: 'Précisez votre rôle et vos principales contributions. (démo)',
   features: ['Fonctionnalité principale (démo)', 'Fonctionnalité secondaire (démo)', 'Détail technique notable (démo)'],
+  results: ['Indicateur ou résultat obtenu (démo)'],
   category, technologies: techs, status: 'published', featured: n <= 2, sortOrder: n, projectDate: `202${3 + (n % 3)}-0${(n % 9) + 1}-15`, ...extra,
 })
 

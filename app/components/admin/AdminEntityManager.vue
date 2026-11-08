@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ArrowDown, ArrowUp, Eye, EyeOff, FileUp, ListPlus, Pencil, Plus, Search, Star, Tag, Trash2 } from 'lucide-vue-next'
 import { ENTITY_DEFAULTS, ENTITY_SCHEMAS, type EntityKey } from '#shared/schemas/entities'
+import type { ResolvedIcon } from '#shared/icons'
 import { optimizeCloudinaryUrl } from '#shared/utils/cloudinary'
 import type { PublicPortfolio, Selection } from '#shared/types/portfolio'
 import { slugify } from '#shared/utils/slug'
@@ -80,7 +81,12 @@ function validate(): boolean {
   if (result.success) return true
   for (const issue of result.error.issues) if (!errors.value[issue.path.join('.')]) errors.value[issue.path.join('.')] = issue.message
   toasts.error('Certains champs sont invalides ou manquants : corrigez-les puis réessayez.')
-  void nextTick(() => document.querySelector<HTMLElement>('[aria-invalid="true"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' }))
+  void nextTick(() => {
+    const invalid = document.querySelector<HTMLElement>('[aria-invalid="true"]')
+    const section = invalid?.closest('details')
+    if (section) section.open = true
+    invalid?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  })
   return false
 }
 async function save(): Promise<void> {
@@ -131,7 +137,12 @@ const thumb = (row: Row): string | null => (typeof row.coverImageUrl === 'string
 const showPreview = async (): Promise<void> => {
   const data = payload()
   const icon = typeof data.icon === 'string' && data.icon ? ((await resolveIconsForAdmin([data.icon]))[data.icon] ?? null) : null
-  preview.value = buildPreview(props.entity, data, icon)
+  let techIcons: Record<string, ResolvedIcon | null> = {}
+  if (Array.isArray(data.technologies) && data.technologies.length) {
+    try { techIcons = await adminFetch<Record<string, ResolvedIcon | null>>('/api/admin/content/projects/technology-icons', { query: { names: data.technologies.join(',') } }) }
+    catch (error) { toasts.error(`Aperçu des icônes indisponible : ${parseApiError(error).message}`) }
+  }
+  preview.value = buildPreview(props.entity, data, icon, techIcons)
 }
 </script>
 
@@ -190,8 +201,8 @@ const showPreview = async (): Promise<void> => {
 
     <dialog ref="editor" class="m-auto max-h-[94svh] w-[min(56rem,calc(100vw-1rem))] rounded-2xl border border-line bg-surface p-0 text-fg backdrop:bg-[rgb(5_20_30/.55)]" aria-labelledby="editor-title" @cancel.prevent="closeEditor">
       <form class="flex max-h-[94svh] flex-col" novalidate @submit.prevent="save">
-        <header class="flex items-center justify-between gap-3 border-b border-line px-6 py-4"><h2 id="editor-title" class="font-display text-lg font-bold">{{ editingId === 'new' ? `Nouveau : ${meta.singular}` : `Modifier : ${meta.title(form)}` }}</h2><Button type="button" variant="ghost" size="sm" @click="closeEditor">Fermer</Button></header>
-        <div class="overflow-y-auto px-6 py-5"><AdminSchemaForm v-model="form" :fields="meta.fields" :errors="errors" :folder="meta.folder" :suggestions="suggestions" /></div>
+        <header class="flex items-start justify-between gap-3 border-b border-line px-4 py-4 sm:px-6"><div><h2 id="editor-title" class="font-display text-lg font-bold">{{ editingId === 'new' ? `Nouveau : ${meta.singular}` : `Modifier : ${meta.title(form)}` }}</h2><p v-if="entity === 'projects'" class="mt-1 text-sm text-muted">Construisez une étude de cas claire, puis prévisualisez-la avant publication.</p></div><Button type="button" variant="ghost" size="sm" @click="closeEditor">Fermer</Button></header>
+        <div class="overflow-y-auto px-4 py-4 sm:px-6 sm:py-5"><AdminSchemaForm v-model="form" :fields="meta.fields" :errors="errors" :folder="meta.folder" :suggestions="suggestions" /></div>
         <footer class="flex flex-wrap items-center justify-end gap-2 border-t border-line px-6 py-4"><Button type="button" variant="ghost" @click="closeEditor">Annuler</Button><Button type="button" variant="outline" @click="showPreview"><Eye />Prévisualiser</Button><Button type="submit" :disabled="saving">{{ saving ? 'Enregistrement…' : 'Enregistrer' }}</Button></footer>
       </form>
     </dialog>

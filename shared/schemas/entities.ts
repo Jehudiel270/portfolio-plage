@@ -11,8 +11,8 @@ const sortOrder = z.number().int().min(0).max(100000)
 export const iconValue = z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? null : v), z.string().max(2048).nullable().refine(isValidIconValue, 'Icône invalide'))
 
 export const projectSchema = z.object({
-  title: label(120), slug: slugSchema, shortDescription: text(280), description: text(8000), problem: text(2000),
-  features: stringList(20, 200), category: text(60), technologies: stringList(30, 40),
+  title: label(120), slug: slugSchema, shortDescription: text(280), description: text(8000), problem: text(2000), role: text(1000),
+  features: stringList(20, 200), results: stringList(20, 240), category: text(60), technologies: stringList(30, 40),
   coverImageUrl: optionalUrl, coverPublicId: publicIdSchema, gallery: z.array(imageRefSchema).max(12),
   liveUrl: optionalUrl, repositoryUrl: optionalUrl, status: z.enum(PROJECT_STATUSES), featured: z.boolean(), sortOrder,
   projectDate: optionalDate, color: optionalHex,
@@ -63,7 +63,7 @@ export type AchievementInput = z.infer<typeof achievementSchema>
 
 /** Valeurs par défaut à la création (et pour initialiser les formulaires d'administration). */
 export const ENTITY_DEFAULTS = {
-  projects: { title: '', slug: '', shortDescription: '', description: '', problem: '', features: [], category: '', technologies: [], coverImageUrl: null, coverPublicId: null, gallery: [], liveUrl: null, repositoryUrl: null, status: 'draft', featured: false, sortOrder: 0, projectDate: null, color: null } satisfies ProjectInput,
+  projects: { title: '', slug: '', shortDescription: '', description: '', problem: '', role: '', features: [], results: [], category: '', technologies: [], coverImageUrl: null, coverPublicId: null, gallery: [], liveUrl: null, repositoryUrl: null, status: 'draft', featured: false, sortOrder: 0, projectDate: null, color: null } satisfies ProjectInput,
   skills: { name: '', slug: '', description: '', category: '', icon: null, iconPublicId: null, color: null, proficiency: null, visible: true, featured: false, sortOrder: 0 } satisfies SkillInput,
   education: { title: '', institution: '', degree: '', field: '', description: '', startDate: '', endDate: null, isCurrent: false, achievements: [], imageUrl: null, imagePublicId: null, url: null, visible: true, featured: false, sortOrder: 0 } satisfies Omit<EducationInput, 'startDate'> & { startDate: string },
   experiences: { organization: '', role: '', type: 'job', location: null, startDate: '', endDate: null, isCurrent: false, description: '', missions: [], results: [], technologies: [], imageUrl: null, imagePublicId: null, url: null, visible: true, featured: false, sortOrder: 0 } satisfies Omit<ExperienceInput, 'startDate'> & { startDate: string },

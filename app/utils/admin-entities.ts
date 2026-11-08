@@ -24,6 +24,7 @@ export interface FieldDef {
   wide?: boolean
   rows?: number
   suggest?: boolean
+  iconPreview?: boolean
 }
 
 export interface EntityMeta {
@@ -58,21 +59,23 @@ export const ENTITY_META: Record<EntityKey, EntityMeta> = {
     quickAdd: { field: 'title', hint: 'Un titre par ligne : les projets sont créés en brouillon.' },
     title: (r) => s(r, 'title'), subtitle: (r) => [s(r, 'category'), (r.technologies as string[] | undefined)?.slice(0, 3).join(', ')].filter(Boolean).join(' · '),
     fields: [
-      { key: 'title', label: 'Titre', type: 'text', section: 'Présentation' },
-      { key: 'category', label: 'Catégorie', type: 'category', scope: 'projects', section: 'Présentation', optional: true },
-      { key: 'shortDescription', label: 'Description courte', type: 'textarea', section: 'Présentation', rows: 2, wide: true, optional: true },
-      { key: 'description', label: 'Description détaillée', type: 'textarea', section: 'Présentation', rows: 6, wide: true, optional: true },
-      { key: 'problem', label: 'Problématique', type: 'textarea', section: 'Présentation', rows: 3, wide: true, optional: true },
-      { key: 'features', label: 'Fonctionnalités principales', type: 'lines', section: 'Présentation', optional: true, wide: true },
-      { key: 'technologies', label: 'Technologies utilisées', type: 'tags', section: 'Présentation', optional: true, wide: true, hint: 'Les icônes se déduisent des noms (ou de vos compétences du même nom).' },
-      { key: 'coverImageUrl', publicIdKey: 'coverPublicId', label: 'Image principale', type: 'image', section: 'Médias', optional: true, wide: true },
-      { key: 'gallery', label: 'Galerie d’images', type: 'gallery', section: 'Médias', optional: true, wide: true },
-      { key: 'liveUrl', label: 'URL de la démonstration', type: 'url', section: 'Liens', optional: true, placeholder: 'https://…' },
-      { key: 'repositoryUrl', label: 'URL du dépôt source', type: 'url', section: 'Liens', optional: true, placeholder: 'https://github.com/…' },
-      { key: 'projectDate', label: 'Date du projet', type: 'date', section: 'Détails', optional: true, hint: 'Sert au tri par date.' },
-      { key: 'color', label: 'Couleur de la bouteille (3D)', type: 'color', section: 'Détails', optional: true },
-      { key: 'slug', label: 'Adresse (slug)', type: 'text', section: 'Détails', optional: true, hint: 'Générée depuis le titre si vide ; unique.' },
-      { key: 'status', label: 'Statut', type: 'select', section: 'Publication', options: opts([[PROJECT_STATUSES[0], 'Brouillon (jamais public)'], [PROJECT_STATUSES[1], 'Publié']]) },
+      { key: 'title', label: 'Titre', type: 'text', section: '01 · Présentation', placeholder: 'Ex. Refonte de la boutique en ligne' },
+      { key: 'category', label: 'Catégorie', type: 'category', scope: 'projects', section: '01 · Présentation', optional: true },
+      { key: 'shortDescription', label: 'Accroche', type: 'textarea', section: '01 · Présentation', rows: 2, wide: true, optional: true, hint: 'Une phrase claire qui résume le projet (280 caractères max).' },
+      { key: 'problem', label: 'Contexte et problématique', type: 'textarea', section: '01 · Présentation', rows: 3, wide: true, optional: true, hint: 'À qui s’adressait le projet et quel besoin devait-il résoudre ?' },
+      { key: 'role', label: 'Mon rôle et ma contribution', type: 'textarea', section: '01 · Présentation', rows: 3, wide: true, optional: true, hint: 'Précisez vos responsabilités, votre équipe et les choix dont vous étiez responsable.' },
+      { key: 'description', label: 'Démarche et solution', type: 'textarea', section: '01 · Présentation', rows: 6, wide: true, optional: true, hint: 'Racontez les étapes, les choix de conception et les défis techniques.' },
+      { key: 'features', label: 'Fonctionnalités clés', type: 'lines', section: '02 · Fonctionnalités et résultats', optional: true, wide: true, hint: 'Une fonctionnalité par ligne. Décrivez ce que la personne peut faire.' },
+      { key: 'results', label: 'Résultats et chiffres clés', type: 'lines', section: '02 · Fonctionnalités et résultats', optional: true, wide: true, hint: 'Une réalisation par ligne : temps gagné, utilisateurs, performance, retour client… N’indiquez que des résultats vérifiables.' },
+      { key: 'technologies', label: 'Technologies utilisées', type: 'tags', section: '02 · Fonctionnalités et résultats', optional: true, wide: true, iconPreview: true, hint: 'Les icônes apparaissent ici. Elles reprennent celles de vos compétences homonymes, sinon la bibliothèque de marques.' },
+      { key: 'coverImageUrl', publicIdKey: 'coverPublicId', label: 'Image principale', type: 'image', section: '03 · Médias', optional: true, wide: true, hint: 'Choisissez une capture représentative : elle sert de couverture et d’aperçu social.' },
+      { key: 'gallery', label: 'Galerie d’images', type: 'gallery', section: '03 · Médias', optional: true, wide: true, hint: 'Ajoutez des captures complémentaires pour illustrer les étapes ou les écrans clés.' },
+      { key: 'liveUrl', label: 'URL de la démonstration', type: 'url', section: '04 · Liens et classement', optional: true, placeholder: 'https://…' },
+      { key: 'repositoryUrl', label: 'URL du dépôt source', type: 'url', section: '04 · Liens et classement', optional: true, placeholder: 'https://github.com/…' },
+      { key: 'projectDate', label: 'Date du projet', type: 'date', section: '04 · Liens et classement', optional: true, hint: 'Sert au tri par date.' },
+      { key: 'color', label: 'Couleur de la bouteille (3D)', type: 'color', section: '04 · Liens et classement', optional: true },
+      { key: 'slug', label: 'Adresse (slug)', type: 'text', section: '04 · Liens et classement', optional: true, hint: 'Générée depuis le titre si vide ; unique.' },
+      { key: 'status', label: 'Statut', type: 'select', section: '05 · Publication', options: opts([[PROJECT_STATUSES[0], 'Brouillon (jamais public)'], [PROJECT_STATUSES[1], 'Publié']]) },
       ...common(),
     ],
   },

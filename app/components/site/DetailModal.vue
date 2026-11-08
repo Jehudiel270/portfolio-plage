@@ -62,7 +62,9 @@ function onClosed(): void {
         <p v-if="entity.item.shortDescription" class="mt-3 text-lg text-fg/85">{{ entity.item.shortDescription }}</p>
         <div v-if="entity.item.description" class="mt-5 grid gap-3 text-fg/80"><p v-for="(t, i) in paragraphs(entity.item.description)" :key="i">{{ t }}</p></div>
         <template v-if="entity.item.problem"><h3 class="mt-7 text-lg text-primary">{{ label('projects.problem') }}</h3><p class="mt-1 text-fg/80">{{ entity.item.problem }}</p></template>
+        <template v-if="entity.item.role"><h3 class="mt-7 text-lg text-primary">Mon rôle</h3><p class="mt-1 whitespace-pre-line text-fg/80">{{ entity.item.role }}</p></template>
         <template v-if="entity.item.features.length"><h3 class="mt-7 text-lg text-primary">{{ label('projects.features') }}</h3><ul class="mt-2 grid list-disc gap-1.5 pl-5 text-fg/80"><li v-for="f in entity.item.features" :key="f">{{ f }}</li></ul></template>
+        <template v-if="entity.item.results.length"><h3 class="mt-7 text-lg text-primary">Résultats</h3><ul class="mt-2 grid gap-2 sm:grid-cols-2"><li v-for="result in entity.item.results" :key="result" class="card p-3 font-semibold">{{ result }}</li></ul></template>
         <template v-if="entity.item.technologies.length"><h3 class="mt-7 text-lg text-primary">{{ label('projects.tech') }}</h3><ul class="mt-2 flex flex-wrap gap-2" role="list"><li v-for="tech in entity.item.technologies" :key="tech.name" class="tag !text-[.85rem]"><IconView v-if="tech.icon" :icon="tech.icon" :size="16" :colorize="iconStyle === 'brand'" />{{ tech.name }}</li></ul></template>
         <div v-if="entity.item.gallery.length" class="mt-7 grid grid-cols-2 gap-2.5 sm:grid-cols-3"><img v-for="g in entity.item.gallery" :key="g.url" :src="img(g.url, 480)" alt="Capture du projet" class="aspect-video w-full rounded-xl object-cover" loading="lazy"></div>
         <div class="mt-8 flex flex-wrap gap-3">

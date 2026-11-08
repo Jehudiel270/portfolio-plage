@@ -41,6 +41,7 @@ Portfolio personnel clair, lisible et soigné : thème sable / océan turquoise 
 - Tableau de bord, CRUD complet : projets, compétences, expériences, formations, certifications, réalisations.
 - **Catégories gérables** (listes déroulantes partout, création à la volée, renommage en cascade).
 - **Icônes par technologie** : 279 icônes de marques (Simple Icons, CC0), icônes génériques (Lucide) ou vos propres images ; facultatives, avec proposition automatique d'après le nom.
+- **Formulaire de projet guidé** : sections repliables, icônes de technologies visibles pendant la saisie, aperçu avant publication et champs dédiés au rôle personnel et aux résultats de l’étude de cas.
 - **Actions en masse** (publier, masquer, mettre en avant, changer de catégorie, supprimer), **ajout rapide** (une ligne = un élément), **import/export CSV et JSON** avec vérification ligne par ligne avant création.
 - **Import de CV** (PDF, DOCX, TXT, ou texte collé) : lecture automatique, relecture obligatoire avant tout import.
 - Apparence (palettes + aperçu en direct + contrôle des contrastes), affichage et menu, **textes de l'interface** (66 libellés modifiables), SEO et page de confidentialité, réglages du décor 3D, contact (e-mail, WhatsApp, consentement), messages reçus.

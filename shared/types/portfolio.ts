@@ -20,8 +20,8 @@ export interface PublicSkill extends Flags {
 }
 
 export interface PublicProject extends Flags {
-  title: string; slug: string; shortDescription: string; description: string; problem: string
-  features: string[]; category: string; technologies: PublicTech[]
+  title: string; slug: string; shortDescription: string; description: string; problem: string; role: string
+  features: string[]; results: string[]; category: string; technologies: PublicTech[]
   coverImageUrl: string | null; gallery: ImageRef[]; liveUrl: string | null; repositoryUrl: string | null
   featured: boolean; sortOrder: number; projectDate: string | null; createdAt: string; color: string | null
 }

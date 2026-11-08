@@ -22,6 +22,13 @@ Le site n’était pas une SPA pure : c’était un portfolio à sections sur l�
 - Le journal ciblé enregistre les créations/suppressions de comptes, les changements d’accès, les connexions et les opérations de sécurité, sans enregistrer de secret. Il n’inclut pas encore chaque modification éditoriale ; les lignes sont conservées au plus 365 jours.
 - L’administration utilise des disclosures natifs repliables pour les réglages détaillés. Le défilement garde ses comportements natifs, avec une barre personnalisée assortie au thème.
 
+### Formulaire de projet et études de cas
+
+- Le formulaire d’administration est organisé en sections repliables ; la création d’un projet guide la saisie de la présentation jusqu’à la publication et ouvre automatiquement la section d’un champ invalide.
+- Les icônes de technologies sont visibles dès la saisie et dans l’aperçu, en reprenant la même priorité que le site public : icône de compétence personnalisée, puis bibliothèque de marques.
+- Les études de cas peuvent maintenant présenter séparément le contexte, le rôle personnel, la démarche, les fonctionnalités et les résultats. Les nouveaux champs « Mon rôle » et « Résultats » restent facultatifs ; les anciennes fiches demeurent valides grâce aux valeurs par défaut de la migration `0002_project_case_study`.
+- Les fiches projet publiques et leur aperçu reprennent ces nouvelles rubriques. Les résultats chiffrés doivent rester vérifiables et ne pas être inventés.
+
 ## Modèle de rôles et de permissions
 
 | Rôle | Portée |

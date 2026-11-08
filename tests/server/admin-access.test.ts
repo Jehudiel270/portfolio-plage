@@ -10,6 +10,8 @@ const editor: AdminContext = {
 describe('admin module authorization', () => {
   it('separates reading from modifying content by module', () => {
     expect(canAccessAdminApi(editor, '/api/admin/content/projects', 'GET')).toBe(true)
+    expect(canAccessAdminApi(editor, '/api/admin/content/projects/technology-icons', 'GET')).toBe(true)
+    expect(canAccessAdminApi(editor, '/api/admin/content/projects/technology-icons', 'POST')).toBe(false)
     expect(canAccessAdminApi(editor, '/api/admin/content/projects', 'POST')).toBe(false)
     expect(canAccessAdminApi(editor, '/api/admin/content/skills', 'PATCH')).toBe(true)
     expect(canAccessAdminApi(editor, '/api/admin/messages', 'GET')).toBe(false)
