@@ -50,7 +50,7 @@ const active = (to: string): boolean => (to === '/admin' ? route.path === '/admi
       <span class="font-display text-base font-bold">Administration</span>
     </header>
     <div class="mx-auto grid max-w-[92rem] lg:grid-cols-[17.5rem_1fr]">
-      <aside class="admin-side lg:sticky lg:top-0 lg:h-svh lg:overflow-y-auto" :class="menuOpen ? 'block' : 'hidden lg:block'">
+      <aside class="admin-side fixed inset-x-0 top-16 bottom-0 z-30 overflow-y-auto lg:sticky lg:top-0 lg:bottom-auto lg:z-auto lg:h-svh" :class="menuOpen ? 'block' : 'hidden lg:block'">
         <div class="flex items-center gap-3 p-5"><svg width="38" height="38" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#bfe9f5" /><circle cx="44" cy="20" r="8" fill="#ffb703" /><path d="M0 40c8-6 14-6 22 0s14 6 22 0 14-6 20 0v24H0z" fill="#0b7285" /></svg><div class="min-w-0"><p class="font-display text-lg font-bold leading-tight">Portfolio</p><p class="truncate text-xs opacity-75">{{ session?.user?.email }}</p></div></div>
         <nav aria-label="Administration" class="grid gap-5 px-3 pb-8">
           <div v-for="group in groups" :key="group.title">
